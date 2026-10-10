@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://b2mlo5rt5rb6c"]
+
+[ext_resource type="PackedScene" uid="uid://chfhv80wb3evr" path="res://Car/car.tscn" id="1_4eckb"]
+[ext_resource type="Texture2D" uid="uid://87ry5tgg42nx" path="res://Mat/Untitled.png" id="1_8b73n"]
+[ext_resource type="PackedScene" uid="uid://b7l688irstjiq" path="res://Restarunt/Restaraunt.tscn" id="3_w8n7u"]
+
+[node name="Main" type="Node"]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_left = -878.0
+offset_top = -2984.0
+offset_right = 3203.0
+offset_bottom = 1587.0
+texture = ExtResource("1_8b73n")
+
+[node name="CAR" parent="." instance=ExtResource("1_4eckb")]
+
+[node name="Restaraunt" parent="." instance=ExtResource("3_w8n7u")]
+position = Vector2(72, 137)
+
+[connection signal="area_entered" from="Restaraunt" to="CAR" method="_on_restaraunt_area_entered"]
