@@ -1,11 +1,7 @@
-extends Area2D
-var directionX = 0; #this tells us how the car is oriented
-var directionY = 90;
-var rotatedX = false; 
-var rotatedY = false;
+extends CharacterBody2D
 var ROTATIONAL_CONST = .06; #turning radius
 var accel = 0; #makes the car accelerate
-var reversed = false; #tells us if the car is supposed to go in reverse
+var can_rotate = false;
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	
@@ -14,106 +10,32 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	print(directionX);
-	if(directionX > 70): ##snaps to the 4 primary directions when it's close enough, excluding when the player is currently turning
-		if !(Input.is_action_pressed("rotate_left") || (Input.is_action_pressed("rotate_right"))):
-			$AnimatedSprite2D.rotation = PI/2;
-			directionX = 90;
-			directionY = 0;
-	if(directionX < -70):
-		if !(Input.is_action_pressed("rotate_left") || (Input.is_action_pressed("rotate_right"))):
-			$AnimatedSprite2D.rotation = -PI/2;
-			directionX = -90;
-			directionY = 0;
-	if(directionY > 70):
-		if !(Input.is_action_pressed("rotate_left") || (Input.is_action_pressed("rotate_right"))):
-			$AnimatedSprite2D.rotation = 0;
-			directionX = 0;
-			directionY = 90;
-	if(directionY < -70):
-		if !(Input.is_action_pressed("rotate_left") || (Input.is_action_pressed("rotate_right"))):
-			$AnimatedSprite2D.rotation = PI;
-			directionX = 0;
-			directionY = -90;
-	if(Input.is_action_just_pressed("Reverse")):
-		reversed = !reversed;
-		print(reversed);
-	if(Input.is_action_pressed("Brake")):
-		if(accel > 0.0):
-			accel -= .1;
-			#$Camera2D.position.x -= 1;
-		if(accel < 0.0):
-			accel = 0;
-			#$Camera2D.position.x = 0;
-	if !(Input.is_action_pressed("forward")): #simulates inertia
-		if(accel > .3):
+	var input_dir = Input.get_axis("forward", "reverse")
+	if(input_dir):
+		velocity = transform.x * input_dir * (accel * 1000);
+	else:
+		velocity = lerp(velocity, Vector2.ZERO, .025)
+	if(Input.is_action_pressed("rotate_left") && can_rotate):
+		rotation -= ROTATIONAL_CONST;
+	if(Input.is_action_pressed("rotate_right") && can_rotate):
+		rotation += ROTATIONAL_CONST;
+	if(!Input.is_action_pressed("reverse") || !Input.is_action_pressed("forward")):
+		can_rotate = false;
+		if(accel >0):
 			accel -= .01;
-			#$Camera2D.position.x -= .1;
-	if Input.is_action_pressed("rotate_left"):
+	if(Input.is_action_pressed("forward")):
+		can_rotate = true;
+		if(accel < 1):
+			accel += .025;
+	if(Input.is_action_pressed("brake")):
 		if(accel > 0):
-			turnLeft();
-	if Input.is_action_pressed("rotate_right"):
-		if(accel > 0):
-			turnRight();
-	if Input.is_action_pressed("forward"):
-		if(accel < 2):
-			accel += .1;
-			#$Camera2D.position.x += 1;
-	if (directionY > 70 || directionY < -70):
-		if !(Input.is_action_pressed("rotate_left") || (Input.is_action_pressed("rotate_right"))):
-			position.x += 0;
-	elif(!reversed):
-			position.x += accel * directionX/10;
-	else:
-		position.x -= accel * directionX/10;
-	if (directionX > 70 || directionX < -70):
-		if !(Input.is_action_pressed("rotate_left") || (Input.is_action_pressed("rotate_right"))):
-			position.y -= 0;
-	elif(!reversed):
-		position.y -= accel * directionY/10;
-	else:
-		position.y += accel * directionY/10;
-		
-	
-	pass
-
-func turnLeft(): #updates the X & Y directional values, then cosmetically rotates the car counter clockwise
-	if(directionX <= -90): #when directionX hits -90 degrees, the rotation starts increasing
-		rotatedX = true;
-	elif(directionX >= 90): #when directionX hits 90 degrees, the rotation starts decreasing
-		rotatedX = false;
-	if(directionY >= 90): #Same for directionY
-		rotatedY = true;
-	elif(directionY <= -90):
-		rotatedY = false;
-	if(rotatedX): 
-		directionX += ROTATIONAL_CONST * 180/PI;
-	else:
-		directionX -= ROTATIONAL_CONST * 180/PI;
-	if(rotatedY):
-		directionY -= ROTATIONAL_CONST * 180/PI;
-	else:
-		directionY += ROTATIONAL_CONST * 180/PI;
-	$AnimatedSprite2D.rotation -= ROTATIONAL_CONST;
-func turnRight(): #Read left, but opposite
-	if(directionX >= 90):
-		rotatedX = true;
-	elif(directionX <= -90):
-		rotatedX = false;
-	if(directionY <= -90):
-		rotatedY = true;
-	elif(directionY >= 90):
-		rotatedY = false;
-	if(rotatedX):
-		directionX -= ROTATIONAL_CONST * 180/PI;
-	else:
-		directionX += ROTATIONAL_CONST * 180/PI;
-	if(rotatedY):
-		directionY += ROTATIONAL_CONST * 180/PI;
-	else:
-		directionY -= ROTATIONAL_CONST * 180/PI;
-	$AnimatedSprite2D.rotation += ROTATIONAL_CONST;
+			accel -= .05;
+	if(Input.is_action_pressed("reverse")):
+		can_rotate = true;
+		if(accel < 1):
+			accel += .025;
+	move_and_slide();
 
 
-func _on_restaraunt_area_entered(area: Area2D) -> void:
-	pass;
+func _on_timer_l_end() -> void:
+	hide();

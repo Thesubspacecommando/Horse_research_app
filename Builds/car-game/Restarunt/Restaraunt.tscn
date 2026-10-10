@@ -1,13 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://b7l688irstjiq"]
+[gd_scene format=3 uid="uid://b7l688irstjiq"]
 
-[ext_resource type="Script" path="res://Restarunt/restaraunt.gd" id="1_hwbi6"]
+[ext_resource type="Script" uid="uid://bojb5a5c4vpqc" path="res://Restarunt/restaraunt.gd" id="1_hwbi6"]
 [ext_resource type="Texture2D" uid="uid://cem5thqqu4igv" path="res://Restarunt/PC_place.png" id="1_n10hm"]
 [ext_resource type="Texture2D" uid="uid://d3oix52fbigxm" path="res://Restarunt/Circle.png" id="3_2j3i5"]
-
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_gv4ry"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_0yjmg"]
-size = Vector2(111, 101)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1a6uj"]
 animations = [{
@@ -15,13 +10,10 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("3_2j3i5")
 }],
-"loop": true,
+"loop": 1,
 "name": &"default",
 "speed": 5.0
 }]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_id1iu"]
-radius = 290.541
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_crbg1"]
 animations = [{
@@ -29,38 +21,45 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("1_n10hm")
 }],
-"loop": true,
+"loop": 1,
 "name": &"default",
 "speed": 5.0
 }]
 
-[node name="Restaraunt" type="Area2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_32gta"]
+size = Vector2(111, 100)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_id1iu"]
+radius = 290.541
+
+[node name="Restaraunt" type="Node2D" unique_id=1682033390]
 position = Vector2(445, 245)
 script = ExtResource("1_hwbi6")
 
-[node name="RigidBody2D" type="RigidBody2D" parent="."]
-position = Vector2(-4, -20)
-physics_material_override = SubResource("PhysicsMaterial_gv4ry")
-freeze = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
-position = Vector2(64.5, 73.5)
-shape = SubResource("RectangleShape2D_0yjmg")
-
-[node name="Green Circle" type="AnimatedSprite2D" parent="."]
+[node name="Green Circle" type="AnimatedSprite2D" parent="." unique_id=2027243115]
 position = Vector2(169, 50)
 scale = Vector2(0.172065, 0.193709)
 sprite_frames = SubResource("SpriteFrames_1a6uj")
 
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1667316385]
+position = Vector2(61, 54)
+scale = Vector2(0.242187, 0.287963)
+sprite_frames = SubResource("SpriteFrames_crbg1")
+
+[node name="Building" type="StaticBody2D" parent="." unique_id=1169090292 groups=["Building"]]
+
+[node name="Building_Col" type="CollisionShape2D" parent="Building" unique_id=1535759680 groups=["Building"]]
+position = Vector2(60.5, 54)
+shape = SubResource("RectangleShape2D_32gta")
+
+[node name="Objective" type="Area2D" parent="." unique_id=910787256]
+
+[node name="Objective_Col" type="CollisionShape2D" parent="Objective" unique_id=1042927202]
 position = Vector2(169, 51)
 scale = Vector2(0.148, 0.167)
-skew = 0.0296706
+skew = 0.029670596
 shape = SubResource("CircleShape2D_id1iu")
 one_way_collision_margin = 0.0
 debug_color = Color(0, 0.6, 0, 0.419608)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(61, 54)
-scale = Vector2(0.242187, 0.287963)
-sprite_frames = SubResource("SpriteFrames_crbg1")
+[connection signal="body_entered" from="Objective" to="." method="_on_objective_body_entered"]

@@ -1,21 +1,60 @@
-[gd_scene load_steps=4 format=3 uid="uid://b2mlo5rt5rb6c"]
+[gd_scene format=3 uid="uid://b2mlo5rt5rb6c"]
 
 [ext_resource type="PackedScene" uid="uid://chfhv80wb3evr" path="res://Car/car.tscn" id="1_4eckb"]
-[ext_resource type="Texture2D" uid="uid://87ry5tgg42nx" path="res://Mat/Untitled.png" id="1_8b73n"]
+[ext_resource type="Texture2D" uid="uid://cu6bffbfa44v2" path="res://Background.png" id="1_h2yge"]
+[ext_resource type="Script" uid="uid://0whs1x5nskjd" path="res://texture_rect.gd" id="2_7mycd"]
 [ext_resource type="PackedScene" uid="uid://b7l688irstjiq" path="res://Restarunt/Restaraunt.tscn" id="3_w8n7u"]
+[ext_resource type="Script" uid="uid://dt1ud57xnvsj" path="res://score.gd" id="4_1bvp3"]
+[ext_resource type="Script" uid="uid://cjvp2qmm2vfv4" path="res://timer_l.gd" id="4_lquwl"]
 
-[node name="Main" type="Node"]
+[sub_resource type="LabelSettings" id="LabelSettings_32gta"]
+font_size = 64
 
-[node name="TextureRect" type="TextureRect" parent="."]
-offset_left = -878.0
-offset_top = -2984.0
-offset_right = 3203.0
-offset_bottom = 1587.0
-texture = ExtResource("1_8b73n")
+[sub_resource type="LabelSettings" id="LabelSettings_kqfgo"]
+font_size = 32
 
-[node name="CAR" parent="." instance=ExtResource("1_4eckb")]
+[node name="Main" type="Node" unique_id=382828628]
 
-[node name="Restaraunt" parent="." instance=ExtResource("3_w8n7u")]
-position = Vector2(72, 137)
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1868934090]
+offset_left = -2434.0
+offset_top = -1282.0
+offset_right = 3134.0
+offset_bottom = 1735.0
+texture = ExtResource("1_h2yge")
+script = ExtResource("2_7mycd")
 
-[connection signal="area_entered" from="Restaraunt" to="CAR" method="_on_restaraunt_area_entered"]
+[node name="CAR" parent="." unique_id=1868171859 instance=ExtResource("1_4eckb")]
+
+[node name="Restaraunt" parent="." unique_id=517901973 instance=ExtResource("3_w8n7u")]
+position = Vector2(15, 27)
+scale = Vector2(2, 2)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1087581481]
+
+[node name="TimerL" type="Label" parent="CanvasLayer" unique_id=663349254]
+offset_left = 512.0
+offset_top = 79.0
+offset_right = 622.0
+offset_bottom = 167.0
+text = "180"
+label_settings = SubResource("LabelSettings_32gta")
+script = ExtResource("4_lquwl")
+
+[node name="Time" type="Timer" parent="CanvasLayer" unique_id=1372813837]
+autostart = true
+
+[node name="Score" type="Label" parent="CanvasLayer" unique_id=1212353758]
+offset_left = 1102.0
+offset_top = -1.0
+offset_right = 1127.0
+offset_bottom = 44.0
+text = "0"
+label_settings = SubResource("LabelSettings_kqfgo")
+script = ExtResource("4_1bvp3")
+
+[connection signal="collect" from="Restaraunt" to="CanvasLayer/Score" method="_on_restaraunt_collect"]
+[connection signal="end" from="CanvasLayer/TimerL" to="TextureRect" method="_on_timer_l_end"]
+[connection signal="end" from="CanvasLayer/TimerL" to="CAR" method="_on_timer_l_end"]
+[connection signal="end" from="CanvasLayer/TimerL" to="Restaraunt" method="_on_timer_l_end"]
+[connection signal="end" from="CanvasLayer/TimerL" to="CanvasLayer/Score" method="_on_timer_l_end"]
+[connection signal="timeout" from="CanvasLayer/Time" to="CanvasLayer/TimerL" method="_on_time_timeout"]
