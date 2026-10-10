@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://njdedf525rg8"]
+
+[ext_resource type="Script" uid="uid://co7mobh25w8nd" path="res://menu.gd" id="1_lti8b"]
+
+[sub_resource type="Theme" id="Theme_32gta"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_kqfgo"]
+font_size = 64
+font_color = Color(0.62502116, 0.38357764, 0.22303769, 1)
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_32gta"]
+
+[node name="Menu" type="CanvasLayer" unique_id=329108050]
+script = ExtResource("1_lti8b")
+
+[node name="Label" type="Label" parent="." unique_id=1625472372]
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 440.0
+offset_right = -420.0
+offset_bottom = -560.0
+theme = SubResource("Theme_32gta")
+theme_override_font_sizes/font_size = 76
+text = "Car game"
+label_settings = SubResource("LabelSettings_kqfgo")
+horizontal_alignment = 1
+
+[node name="Start" type="Button" parent="." unique_id=1247488892]
+anchors_preset = -1
+anchor_left = -1.5070001
+anchor_right = 2.4380002
+anchor_bottom = 7.3640003
+offset_left = 2232.064
+offset_top = 272.0
+offset_right = -2152.5762
+offset_bottom = -4443.872
+theme_override_font_sizes/font_size = 32
+text = "Start"
+icon = SubResource("ViewportTexture_32gta")
+
+[node name="Quit" type="Button" parent="." unique_id=1595055771]
+offset_left = 496.0
+offset_top = 376.0
+offset_right = 656.0
+offset_bottom = 429.0
+theme_override_font_sizes/font_size = 32
+text = "Exit"
+
+[connection signal="pressed" from="Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="Quit" to="." method="_on_quit_pressed"]
